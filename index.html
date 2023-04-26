@@ -68,15 +68,17 @@
     <h2 align="middle">Andrew Zhang</h2>
     <h2 align="middle">Tyler Rathkamp</h2>
     <h2 align="middle">Parth Mahawar</h2>
-    <h2 align="middle">
-        Billy Huang
-    </h2>
+    <h2 align="middle">Billy Huang</h2>
 
     <br /><br />
 
     <div>
         <h2 align="left">Status Report</h2>
-        <p>TODO</p>
+        <p>
+            Our original plan was to simulate a fluid by drawing many particles and using a shader to blend water on top of all these particles. However, we realized that using many small particles is a rather poor approximation to a fluid, as it can never show vortices (local angular momentum) and surface tension. So we’ve decided to first work on more accurate fluid simulations, and add a shader at the end if we have the time. To that end, we have preliminary results of vector fields for velocity and pressure. A small demonstration can be seen  in the video linked below.<br /><br />
+
+            We also plan to write shaders as well, which will color pixels on the screen based on the values in our grid. If we have time, we may transition to a particle-in-cell simulation, which is closer to what we had originally intended. Further complexity can be added by working on rigid particle-in-cell simulations, or affine particle-in-cell simulations. So our updated schedule looks like: Apr 26-30, finish simulation, write shaders, add interactivity. May 1-2, create a demo website and make the presentation.
+        </p>
     </div>
 
 
