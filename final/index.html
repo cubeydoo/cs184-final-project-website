@@ -12,6 +12,7 @@
               font-weight: 300;
               font-family: 'Open Sans', sans-serif;
               color: #121212;
+              line-height: 2em;
           }
 
           h1, h2, h3, h4 {
@@ -44,7 +45,7 @@
               }
     </style>
 
-    <title>CS 184 Mesh Editor</title>
+    <title>2D Grid Based Fluid Dynamics Simulation</title>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <!-- Not using below due to lacking bold fontfaces -->
     <!-- <link href="https://fonts.googleapis.com/css?family=Open+Sans|Source+Sans+Pro|Source+Sans+Pro:400,700" rel="stylesheet"> -->
@@ -70,44 +71,51 @@
     <h2 align="middle">Parth Mahawar</h2>
     <h2 align="middle">Billy Huang</h2>
 
-    <br /><br />
+    <br />
 
     <div>
         <h2 align="middle">Abstract</h2>
         <p>
-            TODO
+            In this project we implemented a 2-dimensional simulation of an incompressible fluid, based on the 1999 paper “Stable Fluids” by Jos Stam. Incompressible fluid here means that changes in pressure don’t change the volume of our fluid, or more precisely, the divergence (net in/out flow) of the fluid at every position is always zero. The resulting demo is available here. The demo is written in Javascript and WebGL.
         </p>
     </div>
 
     <div>
         <h2 align="middle">Technical Approach</h2>
-        <p>We decided to use the Navier-Stokes equation as a basis for our fluid simulation.</p>
-        <img src="https://mofu-dev.com/images/blog/stable-fluids/fluid-images-en.jpg" height="250" width="800" align="middle" /> <br />
+        <p>Our simulation initially starts with a grid of zero velocity and pressure, and an external force is added by the user. Following the paper by Stam, we use the Navier-Stokes equation to model how velocities and pressures change over time in our fluid simulation.The equation is shown below, with labeled terms:</p>
+        <p align="middle">
+            <img src="https://mofu-dev.com/images/blog/stable-fluids/fluid-images-en.jpg" height="200" width="700" />
+        </p>
         <p>
 
-            The Navier-Stokes equation can be broken up into four main parts, advection, pressure, viscosity and external force.
+            Advection is the process of moving velocities/particles through the velocity field over time. Viscosity affects how fast forces propagate through a fluid and how a force is diffused away over time. External force is any extra force that is not the result of fluid movement. Here, it is supplied using the mouse by simply adding velocity to the field. After solving for these three terms, we then derive the new pressure, taking advantage of the fact that incompressible fluids have zero divergence. Finally, with all of the forces known, we update our velocity. As a complicated differential equation, and because our velocity and pressure grids are discretized approximations of continuous fields, we cannot directly and exactly solve for these terms, so all of our intermediate results are approximations, except for external force. Advection is approximated by setting the velocity at a point (x,y) at time step t+1 equal to the velocity at a point (x - dt*v(x), y - dt*v(y)j). Notice we subtract the current velocity from each point. This approximates movement by guessing at time t+1, what point (i,j) at time step t would have moved into each new position (x,y). However, since we only scale velocity by a constant factor, these backwards paths can only be linear, which isn’t the case in real life. Despite the approximation, the result is that velocities are able to move across our grid, which is the result of advection. This advected velocity is then the input to the next term, viscosity. Both viscosity and pressure use the Laplacian ∇2. This is clear for viscosity, but for the pressure term the Laplacian arises because we use the Helmholtz-Hodge decomposition to solve for pressure, which states that ∇2 p = ∇u. Equations of the form Ax = b, (in this case the Lapacian operator can be written as a matrix) can be solved iteratively using the Jacobi method, which is what we decided to use following GPU gems. So both of these terms can be solved in the same way, and more iterations result in more accurate simulations, but increase the computation needed for each time step. At the end of all this, we can then add the terms up to get the velocity field at the next time step. Throughout this process, much of our work was helped by the explanations found at [2], but some derivations we were unable to follow, and we couldn’t get to work. Where those derivations failed, we followed [3], and that seemed to work. And for descriptions on how parameters affected the simulation, and overall stability tips, we took advice from [4]. But of course, our first source was [1].
+
 
         </p>
     </div>
 
     <div>
         <h2 align="middle">Results</h2>
-        <p>
-            TODO
-        </p>
+        <p align="center" >
+            <iframe width="420" height="345" src="https://www.youtube.com/embed/CMSzYlfRm6g" allowfullscreen>
+            </iframe>
+        </palign="center">
     </div>
 
     <div>
         <h2 align="middle">Problems</h2>
         <p>
-            Once our prototype was prepared, we ran into an issue with p5.js in which we were unable to pass negative numbers between fragments. We attempted to use a sigmoid function to remedy this, but this led to further issues. We ultimately decided to swap from using p5.js to regular JavaScript in order to get around this issue.
+            We originally wanted to use the p5.js library for our website and WebGL interface. But once our implementation of advection was running, we ran into an issue with p5.js in which we were unable to pass negative numbers between fragments. WebGL does have extensions to allow negative values, but we couldn’t use these extensions with p5.js. We were able to remedy this by using the sigmoid function to map every value to a number between 0 and 1, but we ultimately decided that this was a haphazard solution which may add numerical instability. So in the end we decided to stop using p5.js and just use plain JavaScript in our website.
+            We also had trouble getting the simulation up and running in the first place, so we decided to simplify the problem and see if we could get a simple, unoptimized solution working in Python. After that was working, we then used the same logic in our WebGL code.
+
         </p>
     </div>
 
     <div>
         <h2 align="middle">Lessons Learned</h2>
         <p>
-            Debugging in WebGL and p5.js is quite difficult when attempting to read in values of certain variables when working with shaders. Writing a rough prototype in python where it is much easier to debug proved very useful for our final implementation.
+            A couple of lessons we learned was to not always jump in head first with the final implementation. Our first attempt had errors on the website that could have come from a multitude of different sources. By writing a rough prototype in Python, we were able to isolate Javascript/WebGL bugs from implementation bugs, and thus split the work more efficiently and allow each person to only focus on one aspect of the project.
+
         </p>
     </div>
 
@@ -116,12 +124,24 @@
         <a href="https://mofu-dev.com/en/blog/stable-fluids/">
             Stable Fluids with three.js by Misaki Nakano
         </a>
+        <br />
+        <a href="https://pages.cs.wisc.edu/~chaol/data/cs777/stam-stable_fluids.pdf">
+            Stable Fluids by Jos Stam
+        </a>
+        <br />
+        <a href="https://developer.nvidia.com/gpugems/gpugems/part-vi-beyond-triangles/chapter-38-fast-fluid-dynamics-simulation-gpu">
+            Fast Fluid Dynamics Simulation on the GPU
+        </a>
     </div>
 
     <div>
         <h2 align="middle">Contributions</h2>
         <p>
-            TODO
+            Andrew: Wrote the Python version of the fluid sim, translated the code to WebGL, made the website UI, co-wrote writeup <br />
+            Billy: <br />
+            Parth: Initial P5.js prototyping, writing some shaders, some UI elements and associated JavaScript functions. <br />
+            Tyler: Helped with prototype, co-wrote milestone/final website, presentation <br />
+
         </p>
     </div>
 
