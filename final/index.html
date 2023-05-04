@@ -73,21 +73,57 @@
     <br /><br />
 
     <div>
-        <h2 align="left">Status Report</h2>
+        <h2 align="middle">Abstract</h2>
         <p>
-            Our original plan was to simulate a fluid by drawing many particles and using a shader to blend water on top of all these particles. However, we realized that using many small particles is a rather poor approximation to a fluid, as it can never show vortices (local angular momentum) and surface tension. So we’ve decided to first work on more accurate fluid simulations using Navier-Stokes, and add a shader to visualize our vector field. To that end, we have preliminary results of a vector field. Currently, we only show the advection effects of a force applied by the mouse. A small demonstration can be seen below:
-            <br /><br />
-            <a href="https://drive.google.com/file/d/1AprQqC5HwREmfcTsCD8S7j1sxpGF5ZdG/view?resourcekey">Video Link</a>
-            <br /><br />
-            The demo works by using shaders to color pixels on the screen based on the values in our vector grid. The current plan for now is to finish up the simulation, by adding pressure and fixing checkerboarding. If we have time, we may transition to a particle-in-cell simulation, which is closer to what we had originally intended. Further complexity can be added by working on rigid particle-in-cell simulations, or affine particle-in-cell simulations. So our updated schedule looks like: Apr 26-30, finish simulation. May 1-2, create a demo website and make the presentation.
-
-            <br /><br />
-            <a href="https://docs.google.com/presentation/d/1DPf6lmJ2LuGqKbarJQftXfudrGHlOw9hhYwJpmCvtwk/edit#slide=id.g23a6a620b8a_0_10">Link to slides</a>
+            TODO
         </p>
     </div>
 
+    <div>
+        <h2 align="middle">Technical Approach</h2>
+        <p>We decided to use the Navier-Stokes equation as a basis for our fluid simulation.</p>
+        <img src="https://mofu-dev.com/images/blog/stable-fluids/fluid-images-en.jpg" height="250" width="800" align="middle" /> <br />
+        <p>
 
-   
+            The Navier-Stokes equation can be broken up into four main parts, advection, pressure, viscosity and external force.
+
+        </p>
+    </div>
+
+    <div>
+        <h2 align="middle">Results</h2>
+        <p>
+            TODO
+        </p>
+    </div>
+
+    <div>
+        <h2 align="middle">Problems</h2>
+        <p>
+            Once our prototype was prepared, we ran into an issue with p5.js in which we were unable to pass negative numbers between fragments. We attempted to use a sigmoid function to remedy this, but this led to further issues. We ultimately decided to swap from using p5.js to regular JavaScript in order to get around this issue.
+        </p>
+    </div>
+
+    <div>
+        <h2 align="middle">Lessons Learned</h2>
+        <p>
+            Debugging in WebGL and p5.js is quite difficult when attempting to read in values of certain variables when working with shaders. Writing a rough prototype in python where it is much easier to debug proved very useful for our final implementation.
+        </p>
+    </div>
+
+    <div>
+        <h2 align="middle">References</h2>
+        <a href="https://mofu-dev.com/en/blog/stable-fluids/">
+            Stable Fluids with three.js by Misaki Nakano
+        </a>
+    </div>
+
+    <div>
+        <h2 align="middle">Contributions</h2>
+        <p>
+            TODO
+        </p>
+    </div>
 
 
 </body>
